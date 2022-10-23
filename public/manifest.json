@@ -8,6 +8,7 @@
     "dir":"ltr",
     "lang":"en-US",
     "short_name": "Aw note",
+    "id": "/index.html?utm_source=homescreen",
     "start_url": "/index.html?utm_source=homescreen",
     "theme_color": "red",
     "icons":[
