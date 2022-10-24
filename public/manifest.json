@@ -1,5 +1,5 @@
 {
-    "background_color": "red",
+    "background_color": "black",
     "description": "Awesome application that will help you achieve your dreams.",
     "display": "standalone",
     "name": "Awesome note",
@@ -10,7 +10,7 @@
     "short_name": "Aw note",
     "id": "/index.html?utm_source=homescreen",
     "start_url": "/index.html?utm_source=homescreen",
-    "theme_color": "red",
+    "theme_color": "yellow",
     "icons":[
         {
             "src": "assets/images/icons/icon-48x48.png",
