@@ -2,7 +2,7 @@
   "name": "pwanote",
   "version": "1.0.0",
   "description": "TopLearn PWA Course Project",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "http-server",
     "start:ssl": "http-server -c-1 -S -C cert.pem -K key.pem",

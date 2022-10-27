@@ -7,21 +7,21 @@ fab.addEventListener("click",function () {
             if (choice.outcome==="dismissed") {
                 console.log(choice);
             }else{
+                ///shoma mitavanid bar asas javab karbar data ra az api begirid.va ....
                 console.log(choice);
             }
         })
-        //we null the beforeinstallpromptEvent to beforeinstallprompt don't execute again.just execute one time;
+        //we null the beforeinstallpromptEvent to beforeinstallprompt don't execute again.just execute one time;if app installed this code will not execute again.
         beforeinstallpromptEvent=null;
     }
 })
 window.addEventListener("beforeinstallprompt",function (event) {
-    console.log(event);
     event.preventDefault();
     beforeinstallpromptEvent=event;
 })
 if ("serviceWorker" in navigator) {
     window.addEventListener("load",function () {
-        navigator.serviceWorker.register("sw.js").then(function () {
+        navigator.serviceWorker.register("/sw.js",{scope:"/"}).then(function (swRegisRes) {
             console.log("service worker registered.");
         }).catch(function () {
             console.log("service worker error");
