@@ -34,9 +34,9 @@ const cleanUpCache=()=>{
 self.addEventListener("install",function (event) {
     console.log("service worker sugest installing...");
     //if we skipwaiting then the sw will active and start running//
-    // self.skipWaiting();
+    self.skipWaiting();
       /// event.waitUntil()این در درجه اول به کار میرود تا مطمین شویم که سرویس ورکر نصب شده در نظر گرفته نمیشود تا زمانی که همه کشهایی که به ان وابسته است پر شوند//
-   event.waitUntil(preCache())
+   event.waitUntil(preCache());
 })
 
 
@@ -57,7 +57,7 @@ self.addEventListener("fetch",function (event) {
         event.respondWith(
                 ///match(request, options):The match() method of the Cache interface returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.
             caches.match(request).then((response)=>{
-               //اگر یکی از درخواستها با ابجکت کش موجود مچ نشد انگاه ان درخواست را فچ کن و یک کش دینامیک باز کن و ان را داخلش قرار بده.
+               //اگر یکی از درخواستها با ابجکت کش موجود مچ نشد انگاه ان درخواست را فچ کن و یک کش دینامیک باز کن و ان را داخلش قرار بده.///
                 return response || fetch(request).then((response)=>{
                     console.log("xxxxxxxxx");
                     console.log(response.clone());
