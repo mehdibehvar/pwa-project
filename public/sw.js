@@ -1,6 +1,6 @@
 ////The ServiceWorker interface is dispatched a set of lifecycle events — install and activate — and functional events including fetch.
-const Static_Cache_Version="static3";
-const Dynamic_Cache_Version="dynamic2";
+const Static_Cache_Version="static8";
+const Dynamic_Cache_Version="dynamic6";
 const Static_Assets=[
     "/",
     "add.html",
@@ -23,18 +23,18 @@ const preCache=async ()=>{
 ///بهترین جا برای اینکار در ایونت اگتیویت است یعنی جایی که سرویس ورکر اماده پردازش دستورات است 
 const cleanUpCache=()=>{
     caches.keys().then((keys)=>{
-        keys.map((key)=>{
-            if(key!==Static_Cache_Version && key!==Dynamic_Cache_Version){
-                caches.delete(key);
-            }
-        })
+return Promise.all(keys.map((key)=>{
+    if(key!==Static_Cache_Version && key!==Dynamic_Cache_Version){
+        console.log("clean cache..........");
+      return  caches.delete(key);
+    }
+}))
     })
 }
 ///install lifecycle event of service worker/////
 self.addEventListener("install",function (event) {
-    console.log("service worker sugest installing...");
     //if we skipwaiting then the sw will active and start running//
-    self.skipWaiting();
+    // self.skipWaiting();
       /// event.waitUntil()این در درجه اول به کار میرود تا مطمین شویم که سرویس ورکر نصب شده در نظر گرفته نمیشود تا زمانی که همه کشهایی که به ان وابسته است پر شوند//
    event.waitUntil(preCache());
 })
@@ -42,16 +42,16 @@ self.addEventListener("install",function (event) {
 
 
 self.addEventListener("activate",function (event) {
-    console.log("service worker is activated and is running",event);
     event.waitUntil(
         cleanUpCache()
-    )
+    );
+    //methode claim barrasi mikonad hamayeh clientha daran az yek service worker estefadeh mikonan.clients yani hameyeh clienthayeh faal masalan hamayeh tabha.
+    return self.clients.claim();
 })
 
 
 ///functional events of service worker/////
 self.addEventListener("fetch",function (event) {
-    console.log("[Service Worker] Fetched resource...");
     const request=event.request;
      ///The respondWith() method of FetchEvent prevents the browser's default fetch handling, and allows you to provide a promise for a Response yourself.به شما اجازه میده خودتان فتچ را هندل کنید
         event.respondWith(
@@ -59,8 +59,6 @@ self.addEventListener("fetch",function (event) {
             caches.match(request).then((response)=>{
                //اگر یکی از درخواستها با ابجکت کش موجود مچ نشد انگاه ان درخواست را فچ کن و یک کش دینامیک باز کن و ان را داخلش قرار بده.///
                 return response || fetch(request).then((response)=>{
-                    console.log("xxxxxxxxx");
-                    console.log(response.clone());
                     caches.open(Dynamic_Cache_Version).then((cache)=>{
                             //The put() method of the Cache interface allows key/value pairs to be added to the current Cache object
             //Note: put() will overwrite any key/value pair previously stored in the cache that matches the request.
@@ -83,7 +81,70 @@ self.addEventListener("fetch",function (event) {
                 });
             }).catch((error)=>console.log("cache match error ....."))
         )
-
+        ///cache strategies////////////////////
+///1-cache only:yani ebteda cache farakhani shavad.
+event.respondWith(
+    caches.match(request)
+);
+///2-network only:baryeh masalan mojodi kif pol
+event.respondWith(
+    fetch(request)
+);
+///3-cache first falling back to network
+event,respondWith(
+    caches.match(request).then(function (res) {
+        return res || fetch(request)
+        .then(function (newRes) {
+            caches.open(Dynamic_Cache_Version).then(function (cache) {
+              return  cache.put(request,newRes);
+            })
+            return newRes.clone();
+        })
+    })
+)
+///4-network first falling back to cache:baryeh vaghti ast keh app shoma bayad online kar konad va data mohem va hasasi darad keh bayad online bashad vali agar moshkli pish omad az cache bekhon//// 
+event.respondWith(
+    fetch(request).then(function (response) {
+        caches.open(Dynamic_Cache_Version).then(function (cache) {
+            cache.put(request,response);
+            return response.clone();
+        }
+        )
+    }).catch(err=>{
+        return caches.match(request)
+    })
+)
+///5-cache with update network:
+event.respondWith(
+    caches.match(request).then(function (res) {
+        const updateResponse=fetch(request).then(function (newRes) {
+            cache.put(request,newRes.clone());
+            return newRes;
+        })
+        return res || updateResponse;
+    })
+)
+///6-cache and network race
+let firstRejectionRecived=false;
+const rejectOnce=()=>{
+    if (firstRejectionRecived) {
+        console.log("No response recived...");
+    } else {
+        firstRejectionRecived=true
+    }
+}
+const promiseRace=new Promise((resolve,reject)=>{
+    //try network
+fetch(request)
+.then(function (response) {
+    return response.ok?resolve(response):rejectOnce();
+}).catch(rejectOnce);
+//try cache
+caches.match(request)
+.then(res=>res?resolve(res):rejectOnce())
+.catch(rejectOnce)
+})
+event.respondWith(promiseRace)
 })
 
 ///وقتی ما یک سری تغیرات را در سرویس ورکر حود ایجاد میکنیم.این سرویس ورکر جدید و اپدیت شده وارد حالت انتظار میشوود و تا زمانی که ما اسکیپ ویتینگ ..نکنیم (چه با استفاده از developer tools or self.skipWaiting()).سرویس ورکر جدید اکتیو نمیشود و شروع به کار نمیکند.حتی اگر صفحه را رفرش کنیم.
