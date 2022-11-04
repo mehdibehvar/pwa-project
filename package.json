@@ -14,7 +14,9 @@
   ],
   "author": "TopLearn.com",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "chalk": "^5.1.2"
+  },
   "devDependencies": {
     "http-server": "^0.10.0"
   }

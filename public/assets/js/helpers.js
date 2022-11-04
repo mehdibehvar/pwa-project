@@ -1,3 +1,6 @@
+if (!window.Promise) {
+  window.Promise=Promise;
+}
 var helpers = (function() {
   // get Query params
   var getParameterByName = function(name, url) {
