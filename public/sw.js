@@ -32,7 +32,6 @@ const cleanUpCache=()=>{
     caches.keys().then((keys)=>{
 return Promise.all(keys.map((key)=>{
     if(key!==Static_Cache_Version && key!==Dynamic_Cache_Version){
-        console.log("clean cache..........");
       return  caches.delete(key);
     }
 }))
@@ -56,26 +55,24 @@ self.addEventListener("activate",function (event) {
     return self.clients.claim();
 })
 function isInclude(string,array) {
-    console.log(("urlstring===:"+string));
     var path;
     ///:self.orgin==== http://localhost:8080
     ////string===:http://localhost:8080/assets/css/style.css
     ///string.substring(self.origin.length)=/assets/css/style.css
+    //for static assets
     if(string.indexOf(self.origin)===0){
       path=string.substring(self.origin.length);
-      console.log(("staticpath=="+path));
     }else{
         ///for cdn
-        ////string=https://fonts.googleapis.com/css?family=Roboto:400,700
+        ////string=https://fonts.googleapis.com/css?family=Roboto:400,700;
         path=string;
-        console.log(("dynamicpath="+path));
     }
-    console.log(array.includes(path));
     // return array.indexOf(path) > -1;
     return array.includes(path);
 }
+///for caching google fonts
 ///https://fonts.gstatic.com/s/materialicons/v139/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2
-const isGoogleStaticUrl=(request)=>{
+const isGoogleFont=(request)=>{
 return request.indexOf(Google_Font_Url)===0;
 }
 const cacheGoogleFont=async (request)=>{
@@ -93,11 +90,11 @@ self.addEventListener("fetch",function (event) {
 if(isInclude(request.url,Static_Assets)){
    event.respondWith(
     caches.match(request).then(function (response) {
-        return response   
+        return response;   
     })
     );
 }
-if (isGoogleStaticUrl(request.url)) {
+if (isGoogleFont(request.url)) {
   event.respondWith(
     caches.match(request.url).then(function (response) {
         return response || cacheGoogleFont(request.url)

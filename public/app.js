@@ -1,3 +1,38 @@
+var DB_NAME="awesome-pwa-note-db";
+var TABLE_NAME="notes"
+if ("indexedDB" in window) {
+    console.log("support indexeddb.....");
+}
+var dbPromise=idb.open(DB_NAME,1, function (db) {
+    if(!db.objectStoreNames.contains(db)){
+        db.createObjectStore(TABLE_NAME,{keyPath:"id"});
+    }
+});
+var writeNote=function (data) {
+    return dbPromise.then(function (db) {
+        const tx = db.transaction(TABLE_NAME, 'readwrite');
+        const store = tx.objectStore(TABLE_NAME);
+        store.put(data);
+        return tx.done;
+    })
+}
+
+fetch("notes.json")
+.then(function (response) {
+    return response.json();
+}).then(function (data) {
+ for(let key in data){
+    writeNote(data[key])
+    .then(function () {
+        console.log("write note done",key);
+    }).catch(console.error)
+ }
+})
+
+
+
+
+
 const fab=document.querySelector("#fab");
 var beforeinstallpromptEvent;
 fab.addEventListener("click",function () {
