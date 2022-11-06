@@ -1,3 +1,4 @@
+
 var app = (function() {
   var indexPage = function() {
     // Register Dialog box
