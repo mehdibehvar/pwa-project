@@ -163,3 +163,27 @@ var app = (function() {
     addPage: addPage,
   };
 })();
+///register serviceWorker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load",function () {
+      navigator.serviceWorker.register("/sw.js",{scope:"/"}).then(function (swRegisRes) {
+          console.log("service worker registered.");
+      }).catch(function () {
+          console.log("service worker error");
+      })
+  })
+}
+
+//// fetch data from external api and write them in indexedDB
+// fetch("notes.json")
+// .then(function (response) {
+//     return response.json();
+// }).then(function (data) {
+//  for(let key in data){
+//     writeNote(data[key])
+//     .then(function () {
+//         console.log("write note done",key);
+//     }).catch(console.error)
+//  }
+// })
+

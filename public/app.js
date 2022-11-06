@@ -1,28 +1,10 @@
 
-// fetch("notes.json")
-// .then(function (response) {
-//     return response.json();
-// }).then(function (data) {
-//  for(let key in data){
-//     writeNote(data[key])
-//     .then(function () {
-//         console.log("write note done",key);
-//     }).catch(console.error)
-//  }
-// })
 
 
 
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load",function () {
-        navigator.serviceWorker.register("/sw.js",{scope:"/"}).then(function (swRegisRes) {
-            console.log("service worker registered.");
-        }).catch(function () {
-            console.log("service worker error");
-        })
-    })
-}
+
+
 ///click to install app
 
 // const fab=document.querySelector("#fab");
