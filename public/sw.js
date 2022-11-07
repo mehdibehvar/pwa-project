@@ -14,13 +14,15 @@ const Static_Assets=[
     "https://fonts.googleapis.com/icon?family=Material+Icons",
     "/manifest.json",
     "/favicon.ico",
-    "/app.js",
     "/assets/images/placeholder.png",
     "/assets/js/helpers.js",
     "/assets/js/libs/material.min.js",
     "/assets/js/main.js",
+    "/assets/js/db.js",
+    "/assets/js/idb.min.js",
     "/assets/js/libs/fetch.js",
     "/assets/js/libs/promise.js"
+
 ];
 const preCache=async ()=>{
     console.log("precacheing...................");
@@ -81,11 +83,12 @@ const cacheGoogleFont=async (request)=>{
         cache.put(request,res);
     })
     return res.clone();
-   })
+   }).catch(console.error())
 }
 ///functional events of service worker/////
 self.addEventListener("fetch",function (event) {
     const request=event.request;
+    console.log(request);
      ///The respondWith() method of FetchEvent prevents the browser's default fetch handling, and allows you to provide a promise for a Response yourself.به شما اجازه میده خودتان فتچ را هندل کنید
 if(isInclude(request.url,Static_Assets)){
    event.respondWith(
@@ -96,7 +99,7 @@ if(isInclude(request.url,Static_Assets)){
 }
 if (isGoogleFont(request.url)) {
   event.respondWith(
-    caches.match(request.url).then(function (response) {
+    caches.match(request).then(function (response) {
         return response || cacheGoogleFont(request.url)
     })
   )

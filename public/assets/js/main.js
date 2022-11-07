@@ -93,12 +93,20 @@ var app = (function() {
 
     var getDataAndUpdateUI = function() {
       // Call essential methods
-      updateUI([]);
+      db.readAllNotes().then(function (notes) {
+        const sortNotesByDate=notes.sort(function (a,b) {
+          return a.id-b.id;
+        })
+        updateUI(sortNotesByDate);
+      })
     };
 
     var deleteNote = function(id) {
-      helpers.showMessage('Note deleted: ' + id);
-      window.history.back(1);
+      db.deleteNote(id).then(function () {
+        helpers.showMessage('Note deleted:' + id);
+        window.history.back(1);  
+        getDataAndUpdateUI();
+      })
     };
 
     // Call initially to update data
@@ -108,6 +116,7 @@ var app = (function() {
       .querySelector('.confirmDelete')
       .addEventListener('click', function() {
         var id = helpers.getHashByName('id');
+        deleteNote(parseInt(id));
         dialog.close();
       });
   };
@@ -139,7 +148,12 @@ var app = (function() {
           date: new Date(),
           synced: false,
         };
-        helpers.showMessage('successfully updated to local db!');
+        db.writeNotes(noteData).then(function () {
+          helpers.showMessage('successfully updated to local db!');
+          setTimeout(() => {
+            window.history.back(1);
+          }, 500); 
+        })
       });
     };
 
@@ -147,11 +161,11 @@ var app = (function() {
     if (id) {
       pageTitle.innerHTML = 'Edit your Note';
       // get Note information from DB
-      db_helpers.getNote(id).then(function(data) {
+      db.getNote(parseInt(id)).then(function (data) {
         titleInput.value = data.title;
         noteInput.value = data.note;
         AttachSubmitForm(data);
-      });
+      })
     } else {
       // call essential methods
       AttachSubmitForm();

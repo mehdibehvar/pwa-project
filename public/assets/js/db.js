@@ -7,7 +7,7 @@ const db=(function () {
         console.log("browser support indexedDb");
     }
     ///create and open a database named DB_NAME; 
-    /// then if database doesn't contain any table named TABLE_NAME create one in database
+    /// then if database doesn't contain any table named TABLE_NAME create one in database and put keyPath=id
     const dbPromise=idb.open(DB_NAME,1,function (database) {
         if(!database.objectStoreNames.contains(TABLE_NAME)){
             database.createObjectStore(TABLE_NAME,{keyPath:"id"});
@@ -16,9 +16,10 @@ const db=(function () {
     ///write and put data in TABLE_NAME
     const writeNotes=function (data) {
         return dbPromise.then(function (database) {
-            const tx=database.transaction(TABLE_NAME,"readwrite");
-            const store=tx.objectStore(TABLE_NAME);
-            store.put(data);
+            var tx=database
+            .transaction(TABLE_NAME,"readwrite")
+            .objectStore(TABLE_NAME)
+            .put(data);
             return tx.complete;
         });
     }
@@ -31,6 +32,7 @@ const db=(function () {
     }
     ///delete note
     const deleteNote=function (id) {
+        console.log("deleting...........");
         return dbPromise.then(function (database) {
             const tx=database.transaction(TABLE_NAME,"readwrite")
             .objectStore(TABLE_NAME).delete(id);
@@ -60,4 +62,4 @@ const db=(function () {
         deleteNote,
         clearAllNotes
     }
-})
+})()
