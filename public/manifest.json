@@ -10,7 +10,7 @@
     "short_name": "Aw note",
     "id": "/index.html?utm_source=homescreen",
     "start_url": "/index.html?utm_source=homescreen",
-    "theme_color": "yellow",
+    "theme_color": "red",
     "icons":[
         {
             "src": "assets/images/icons/icon-48x48.png",
