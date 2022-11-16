@@ -148,12 +148,31 @@ var app = (function() {
           date: new Date(),
           synced: false,
         };
-        db.writeNotes(noteData).then(function () {
+        if ("serviceWorker" in navigator && "SyncManager" in window) {
+          navigator.serviceWorker.ready
+          .then(function (sw) {
+          db.writeNotes(noteData).then(function () {
           helpers.showMessage('successfully updated to local db!');
           setTimeout(() => {
             window.history.back(1);
           }, 500); 
+        });
+        return sw.sync.register("BACKGROUND_SYNC_SAVE")
+          }).then(function () {
+            console.log("tag-name has been registered");
+          }).catch(function () {
+            console.log("tag-name error");
+          })
+        }else{
+               sendData(noteData).then(function (res) {
+               helpers.showMessage("data saved in db");
+                setTimeout(() => {
+                  window.history.back(1);
+          }, 500);
+        }).catch(function (error) {
+          console.log(error);
         })
+        }
       });
     };
 
@@ -162,6 +181,7 @@ var app = (function() {
       pageTitle.innerHTML = 'Edit your Note';
       // get Note information from DB
       db.getNote(parseInt(id)).then(function (data) {
+        // this is for showing previous values in the form inputs for edit
         titleInput.value = data.title;
         noteInput.value = data.note;
         AttachSubmitForm(data);
@@ -177,6 +197,7 @@ var app = (function() {
     addPage: addPage,
   };
 })();
+
 ///register serviceWorker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load",function () {

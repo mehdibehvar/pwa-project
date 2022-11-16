@@ -6,7 +6,8 @@
   "scripts": {
     "start": "http-server",
     "start:ssl": "http-server -c-1 -S -C cert.pem -K key.pem",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "json-server": "json-server --watch ./utils/db.json --port 6060"
   },
   "keywords": [
     "PWA",

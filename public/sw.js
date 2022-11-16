@@ -1,7 +1,7 @@
 ////The ServiceWorker interface is dispatched a set of lifecycle events — install and activate — and functional events including fetch.
 const Google_Font_Url = "https://fonts.gstatic.com";
-const Static_Cache_Version = "static4";
-const Dynamic_Cache_Version = "dynamic4";
+const Static_Cache_Version = "static1";
+const Dynamic_Cache_Version = "dynamic1";
 ///به هیچ وجه sw.js را کش نکنید چون اگر کش بشه از داخل کش خونده میشه و به هیچ وجه اپدیت نمیشه.
 const Static_Assets = [
   "/",
@@ -17,6 +17,7 @@ const Static_Assets = [
   "/assets/images/placeholder.png",
   "/assets/js/helpers.js",
   "/assets/js/libs/material.min.js",
+  "assets/js/api.js",
   "/assets/js/main.js",
   "/assets/js/db.js",
   "/assets/js/idb.min.js",
@@ -120,7 +121,7 @@ self.addEventListener("fetch", function (event) {
   } else {
   return  fetch(request)
       .then(function (res) {
-        console.log("fetch not static....", res);
+        // console.log("fetch not static....", res);
         caches.open(Dynamic_Cache_Version).then(function (cache) {
           return cache.put(request,res);
         });
