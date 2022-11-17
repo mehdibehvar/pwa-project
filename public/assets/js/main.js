@@ -177,10 +177,10 @@ const sortAndUpdateUI=function (data) {
           db.writeNotes(noteData).then(function () {
           helpers.showMessage('successfully updated to local db!');
           setTimeout(() => {
-            window.history.back(1);
+            window.location.replace("/index.html");
           }, 500); 
+          return sw.sync.register(BACKGROUND_SYNC_SAVE)
         });
-        return sw.sync.register("BACKGROUND_SYNC_SAVE")
           }).then(function () {
             console.log("tag-name has been registered");
           }).catch(function () {
@@ -190,7 +190,7 @@ const sortAndUpdateUI=function (data) {
                sendData(noteData).then(function (res) {
                helpers.showMessage("data saved in db");
                 setTimeout(() => {
-                  window.history.back(1);
+                  window.location.replace("/index.html");
           }, 500);
         }).catch(function (error) {
           console.log(error);

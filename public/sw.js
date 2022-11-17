@@ -103,7 +103,7 @@ const fetchOffline=async (request)=>{
 ///functional events of service worker/////
 self.addEventListener("fetch", function (event) {
   const request = event.request;
-  console.log("app req is:",request.url);
+  // console.log("app req is:",request.url);
   ///The respondWith() method of FetchEvent prevents the browser's default fetch handling, and allows you to provide a promise for a Response yourself.به شما اجازه میده خودتان فتچ را هندل کنید
   if (isInclude(request.url, Static_Assets)) {
     event.respondWith(
@@ -131,6 +131,7 @@ self.addEventListener("fetch", function (event) {
   fetch(request.url).then(function (response) {
     const clonedResponse=response.clone();
     db.clearAllNotes().then(function () {
+      console.log("clearing indexeddb............xxxxxxxxxxxxxxxxxxxxx");
       return clonedResponse.json();
     })
     .then(function (data) {
@@ -139,10 +140,30 @@ self.addEventListener("fetch", function (event) {
       }
     });
     return response;
+  }).catch(function (error) {
+    console.log("cant get notes and save in indexeddb",error);
   })
     )
   }
 });
+
+//// create background-sync
+self.addEventListener("sync",function (event) {
+  console.log("sw background sync event:",event);
+  if(event.tag==="new-notes-sync"){
+    event.waitUntil(
+      db.readAllNotes().then(function (data) {
+        data.filter(note=>!note.synced).map(unSyncNote=>sendData(unSyncNote))
+      })
+    )
+    
+  }
+})
+
+
+
+
+
  // event.respondWith(
   //         ///match(request, options):The match() method of the Cache interface returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.
   //     caches.match(request).then((response)=>{

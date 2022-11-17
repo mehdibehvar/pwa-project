@@ -1,4 +1,5 @@
 const serverUrl="http://localhost:6060/notes/"
+const BACKGROUND_SYNC_SAVE="new-notes-sync"
 function getAllNotes() {
     return fetch(serverUrl);
 }
