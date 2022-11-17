@@ -3,9 +3,9 @@ const db=(function () {
     const DB_NAME="awesome-pwa-note-db";
     const TABLE_NAME="notes";
     ///check if browser support indexedDB
-    if ("indexedDB" in window) {
-        console.log("browser support indexedDb");
-    }
+    // if ("indexedDB" in window) {
+    //     console.log("browser support indexedDb");
+    // }
     ///create and open a database named DB_NAME; 
     /// then if database doesn't contain any table named TABLE_NAME create one in database and put keyPath=id
     const dbPromise=idb.open(DB_NAME,1,function (database) {
@@ -49,7 +49,7 @@ const db=(function () {
     ///clear all notes
     const clearAllNotes=function () {
         return dbPromise.then(function (database) {
-            const tx= database.transaction(TABLE_NAME,"readonly")
+            const tx= database.transaction(TABLE_NAME,"readwrite")
             .objectStore(TABLE_NAME).clear();
             return tx.complete;
         })

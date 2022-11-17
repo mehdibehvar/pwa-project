@@ -1,7 +1,10 @@
 ////The ServiceWorker interface is dispatched a set of lifecycle events — install and activate — and functional events including fetch.
+importScripts("/assets/js/idb.min.js");
+importScripts("/assets/js/db.js");
+importScripts("/assets/js/api.js");
 const Google_Font_Url = "https://fonts.gstatic.com";
-const Static_Cache_Version = "static1";
-const Dynamic_Cache_Version = "dynamic1";
+const Static_Cache_Version = "static2";
+const Dynamic_Cache_Version = "dynamic2";
 ///به هیچ وجه sw.js را کش نکنید چون اگر کش بشه از داخل کش خونده میشه و به هیچ وجه اپدیت نمیشه.
 const Static_Assets = [
   "/",
@@ -17,7 +20,7 @@ const Static_Assets = [
   "/assets/images/placeholder.png",
   "/assets/js/helpers.js",
   "/assets/js/libs/material.min.js",
-  "assets/js/api.js",
+  "/assets/js/api.js",
   "/assets/js/main.js",
   "/assets/js/db.js",
   "/assets/js/idb.min.js",
@@ -100,44 +103,45 @@ const fetchOffline=async (request)=>{
 ///functional events of service worker/////
 self.addEventListener("fetch", function (event) {
   const request = event.request;
+  console.log("app req is:",request.url);
   ///The respondWith() method of FetchEvent prevents the browser's default fetch handling, and allows you to provide a promise for a Response yourself.به شما اجازه میده خودتان فتچ را هندل کنید
   if (isInclude(request.url, Static_Assets)) {
     event.respondWith(
       caches
         .match(request)
         .then(function (response) {
-          return response || fetch(request).then(function (response) {
-            caches.open(Dynamic_Cache_Version).then(function (cache) {
-                return cache.put(request,response)
-            })
-            return response.clone();
-          }).catch((error)=>{
-         return fetchOffline(request);  
-          });
+          return response;
         }).catch((error)=>{
             console.log("1111111111")
         })
     );
-  } else {
-  return  fetch(request)
-      .then(function (res) {
-        // console.log("fetch not static....", res);
-        caches.open(Dynamic_Cache_Version).then(function (cache) {
-          return cache.put(request,res);
-        });
-        return res.clone();
-      })
-      .catch((error)=>{
-        console.log("2222222222222",error);    
-      });
   }
-//   if (isGoogleFont(request.url)) {
-//     event.respondWith(
-//       caches.match(request).then(function (response) {
-//         return response || cacheGoogleFont(request.url);
-//       })
-//     );
-//   }
+  if (isGoogleFont(request.url)) {
+    console.log("req for google static is::::::",request.url);
+    event.respondWith(
+      caches.match(request.url).then(function (response) {
+        return response || cacheGoogleFont(request.url);
+      })
+    );
+  };
+  
+  if (request.url.includes("http://localhost:6060/notes/")) {
+    console.log("req for server is::::::",request.url);
+    event.respondWith(
+  fetch(request.url).then(function (response) {
+    const clonedResponse=response.clone();
+    db.clearAllNotes().then(function () {
+      return clonedResponse.json();
+    })
+    .then(function (data) {
+      for(let key in data){
+        db.writeNotes(data[key]);
+      }
+    });
+    return response;
+  })
+    )
+  }
 });
  // event.respondWith(
   //         ///match(request, options):The match() method of the Cache interface returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.
@@ -234,4 +238,32 @@ self.addEventListener("fetch", function (event) {
 // .then(res=>res?resolve(res):rejectOnce())
 // .catch(rejectOnce)
 // })
+
+
+
+
+
+
+
 // event.respondWith(promiseRace)
+//// fetch(request).then(function (response) {
+//   caches.open(Dynamic_Cache_Version).then(function (cache) {
+//     return cache.put(request,response)
+// })
+// return response.clone();
+// }).catch((error)=>{
+// return fetchOffline(request);  
+// });
+//// else {
+//   return  fetch(request)
+//   .then(function (res) {
+//     // console.log("fetch not static....", res);
+//     caches.open(Dynamic_Cache_Version).then(function (cache) {
+//       return cache.put(request,res);
+//     });
+//     return res.clone();
+//   })
+//   .catch((error)=>{
+//     console.log("2222222222222",error);    
+//   });
+// }

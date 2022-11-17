@@ -38,7 +38,7 @@ var app = (function() {
       var HTML = NOTE_TEMPLATE.replace(getRegex(TITLE_PLACEHOLDER), title);
       HTML = HTML.replace(getRegex(ID_PLACEHOLDER), id);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
-      HTML = HTML.replace(getRegex(DATE_PLACEHOLDER), helpers.formatDate(date));
+      // HTML = HTML.replace(getRegex(DATE_PLACEHOLDER), helpers.formatDate(date));
       HTML = HTML.replace(getRegex(SYNCED_PLACEHOLDER), synced);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
 
@@ -90,15 +90,34 @@ var app = (function() {
     var showModalFn = function() {
       dialog.showModal();
     };
-
-    var getDataAndUpdateUI = function() {
-      // Call essential methods
-      db.readAllNotes().then(function (notes) {
-        const sortNotesByDate=notes.sort(function (a,b) {
-          return a.id-b.id;
-        })
-        updateUI(sortNotesByDate);
+    const sortingFun=function (data) {
+      return data.sort(function (a,b) {
+        return a.id-b.id;
       })
+    }
+const sortAndUpdateUI=function (data) {
+  const sorted=sortingFun(data);
+  updateUI(sorted)
+}
+    var getDataAndUpdateUI = function() {
+    const dataArray=[];
+      getAllNotes().then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        for(let key in data){
+          dataArray.push(data[key]);
+        }
+        sortAndUpdateUI(data)
+      }).catch(function (error) {
+        console.log("load data online failed",error);
+        db.readAllNotes().then(function (notes) {
+          sortAndUpdateUI(notes)
+        })
+      })
+
+
+      // Call essential methods
+      
     };
 
     var deleteNote = function(id) {

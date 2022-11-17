@@ -1,5 +1,5 @@
 const serverUrl="http://localhost:6060/notes/"
-function getAllData() {
+function getAllNotes() {
     return fetch(serverUrl);
 }
 function getById(id) {
