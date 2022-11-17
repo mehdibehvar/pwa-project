@@ -38,7 +38,11 @@ var app = (function() {
       var HTML = NOTE_TEMPLATE.replace(getRegex(TITLE_PLACEHOLDER), title);
       HTML = HTML.replace(getRegex(ID_PLACEHOLDER), id);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
-      // HTML = HTML.replace(getRegex(DATE_PLACEHOLDER), helpers.formatDate(date));
+      let d = new Date(2010, 7, 5);
+let ye = new Intl.DateTimeFormat('fa', { year: 'numeric' }).format(d);
+let mo = new Intl.DateTimeFormat('fa', { month: 'short' }).format(d);
+let da = new Intl.DateTimeFormat('fa', { day: '2-digit' }).format(d);
+      HTML = HTML.replace(getRegex(DATE_PLACEHOLDER),`${da}-${mo}-${ye}`);
       HTML = HTML.replace(getRegex(SYNCED_PLACEHOLDER), synced);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
 
