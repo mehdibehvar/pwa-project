@@ -38,10 +38,10 @@ var app = (function() {
       var HTML = NOTE_TEMPLATE.replace(getRegex(TITLE_PLACEHOLDER), title);
       HTML = HTML.replace(getRegex(ID_PLACEHOLDER), id);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
-      let d = new Date(2010, 7, 5);
-let ye = new Intl.DateTimeFormat('fa', { year: 'numeric' }).format(d);
-let mo = new Intl.DateTimeFormat('fa', { month: 'short' }).format(d);
-let da = new Intl.DateTimeFormat('fa', { day: '2-digit' }).format(d);
+      let d = new Date();
+      let ye = new Intl.DateTimeFormat('fa', { year: 'numeric' }).format(d);
+      let mo = new Intl.DateTimeFormat('fa', { month: 'short' }).format(d);
+      let da = new Intl.DateTimeFormat('fa', { day: '2-digit' }).format(d);
       HTML = HTML.replace(getRegex(DATE_PLACEHOLDER),`${da}-${mo}-${ye}`);
       HTML = HTML.replace(getRegex(SYNCED_PLACEHOLDER), synced);
       HTML = HTML.replace(getRegex(NOTE_PLACEHOLDER), note);
@@ -214,7 +214,6 @@ const sortAndUpdateUI=function (data) {
       AttachSubmitForm();
     }
   };
-
   return {
     indexPage: indexPage,
     addPage: addPage,
@@ -224,7 +223,9 @@ const sortAndUpdateUI=function (data) {
 ///register serviceWorker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load",function () {
-      navigator.serviceWorker.register("/sw.js",{scope:"/"}).then(function (swRegisRes) {
+      navigator.serviceWorker.register("/sw.js",{
+        scope: "/"
+      }).then(function (swRegisRes) {
           console.log("service worker registered.");
       }).catch(function () {
           console.log("service worker error");
@@ -232,16 +233,4 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-//// fetch data from external api and write them in indexedDB
-// fetch("notes.json")
-// .then(function (response) {
-//     return response.json();
-// }).then(function (data) {
-//  for(let key in data){
-//     writeNote(data[key])
-//     .then(function () {
-//         console.log("write note done",key);
-//     }).catch(console.error)
-//  }
-// })
 

@@ -4,7 +4,7 @@
     "display": "standalone",
     "name": "Awesome note",
     "orientation": "portrait-primary",
-    "scope": "/",
+    "scope": ".",
     "dir":"ltr",
     "lang":"en-US",
     "short_name": "Aw note",
