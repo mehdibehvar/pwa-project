@@ -232,16 +232,15 @@ if ("serviceWorker" in navigator) {
 }
 const notificationButton=document.querySelector(".notification_button");
 function showNotificationMessage() {
-  console.log("xxxxxxxxxxxxxxxxxxxxxx");
   const options={
     body:"your subscribe was successfully..",
     // badge:"/assets/images/icons/icon-48x48.png",
     icon:"/assets/images/icons/icon-48x48.png",
     // image:"/assets/images/icons/icon-48x48.png",
     dir:"ltr",
+    vibrate:[200, 100, 200]
   }
   const n=new Notification("success notification",options);
-  console.log(n)
 }
 function requestPermition() {
   Notification.requestPermission(function (userChoice) {
