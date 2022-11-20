@@ -68,6 +68,7 @@ function isInclude(string, array) {
   } else {
     ///for cdn
     ////string=https://fonts.googleapis.com/css?family=Roboto:400,700;
+    console.log(string);
     path = string;
   }
   // return array.indexOf(path) > -1;
@@ -157,7 +158,7 @@ self.addEventListener("fetch", function (event) {
         console.log("cant get notes and save in indexeddb", error);
       });
   } else {
-    if (!isInclude(request.url, Static_Assets)) {
+    if (!isInclude(request.url, Static_Assets) && !isInclude(request.url,["chrome-extension://hejbmebodbijjdhflfknehhcgaklhano/window/testing-library.js"])) {
       caches
       .match(request.url)
       .then(function (response) {
