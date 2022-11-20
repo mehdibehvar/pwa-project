@@ -68,7 +68,6 @@ function isInclude(string, array) {
   } else {
     ///for cdn
     ////string=https://fonts.googleapis.com/css?family=Roboto:400,700;
-    console.log(string);
     path = string;
   }
   // return array.indexOf(path) > -1;
@@ -103,7 +102,6 @@ const fetchOffline = async (request) => {
 };
 //// create background-sync
 self.addEventListener("sync", function (event) {
-  console.log("sw background sync event:", event);
   if (event.tag === "new-notes-sync") {
     event.waitUntil(
       db.readAllNotes().then(function (data) {
@@ -144,7 +142,6 @@ self.addEventListener("fetch", function (event) {
         const clonedResponse = response.clone();
         db.clearAllNotes()
           .then(function () {
-            console.log("clearing indexeddb ............xxxxxxxxxxxxxxxxxxxxx");
             return clonedResponse.json();
           })
           .then(function (data) {
