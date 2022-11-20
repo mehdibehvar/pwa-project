@@ -47,7 +47,7 @@ const cleanUpCache = () => {
 ///install lifecycle event of service worker/////
 self.addEventListener("install", function (event) {
   //if we skipwaiting then the sw will active and start running//
-  // self.skipWaiting();
+  self.skipWaiting();
   /// event.waitUntil()این در درجه اول به کار میرود تا مطمین شویم که سرویس ورکر نصب شده در نظر گرفته نمیشود تا زمانی که همه کشهایی که به ان وابسته است پر شوند//
   event.waitUntil(preCache());
 });
