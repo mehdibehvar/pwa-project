@@ -3,8 +3,8 @@ importScripts("/assets/js/idb.min.js");
 importScripts("/assets/js/db.js");
 importScripts("/assets/js/api.js");
 const Google_Font_Url = "https://fonts.gstatic.com";
-const Static_Cache_Version = "static3";
-const Dynamic_Cache_Version = "dynamic3";
+const Static_Cache_Version = "static4";
+const Dynamic_Cache_Version = "dynamic4";
 ///به هیچ وجه sw.js را کش نکنید چون اگر کش بشه از داخل کش خونده میشه و به هیچ وجه اپدیت نمیشه.
 const Static_Assets = [
   '/',
@@ -100,6 +100,19 @@ const fetchOffline = async (request) => {
     }
   });
 };
+//// create background-sync
+self.addEventListener("sync", function (event) {
+  console.log("sw background sync event:", event);
+  if (event.tag === "new-notes-sync") {
+    event.waitUntil(
+      db.readAllNotes().then(function (data) {
+        data
+          .filter((note) => !note.synced)
+          .map((unSyncNote) => sendData(unSyncNote));
+      })
+    );
+  }
+});
 ///functional events of service worker/////
 self.addEventListener("fetch", function (event) {
   const request = event.request;
@@ -163,19 +176,7 @@ self.addEventListener("fetch", function (event) {
   }
 });
 
-//// create background-sync
-self.addEventListener("sync", function (event) {
-  console.log("sw background sync event:", event);
-  if (event.tag === "new-notes-sync") {
-    event.waitUntil(
-      db.readAllNotes().then(function (data) {
-        data
-          .filter((note) => !note.synced)
-          .map((unSyncNote) => sendData(unSyncNote));
-      })
-    );
-  }
-});
+
 
 // event.respondWith(
 //         ///match(request, options):The match() method of the Cache interface returns a Promise that resolves to the Response associated with the first matching request in the Cache object. If no match is found, the Promise resolves to undefined.

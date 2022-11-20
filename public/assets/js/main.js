@@ -223,14 +223,37 @@ const sortAndUpdateUI=function (data) {
 ///register serviceWorker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load",function () {
-      navigator.serviceWorker.register("/sw.js",{
-        scope: "/"
-      }).then(function (swRegisRes) {
+      navigator.serviceWorker.register("./sw.js").then(function (swRegisRes) {
           console.log("service worker registered.");
       }).catch(function () {
           console.log("service worker error");
       })
   })
 }
-
-
+const notificationButton=document.querySelector(".notification_button");
+function showNotificationMessage() {
+  console.log("xxxxxxxxxxxxxxxxxxxxxx");
+  const options={
+    body:"your subscribe was successfully..",
+    // badge:"/assets/images/icons/icon-48x48.png",
+    icon:"/assets/images/icons/icon-48x48.png",
+    // image:"/assets/images/icons/icon-48x48.png",
+    dir:"ltr",
+  }
+  const n=new Notification("success notification",options);
+  console.log(n)
+}
+function requestPermition() {
+  Notification.requestPermission(function (userChoice) {
+    console.log("userchoice:",userChoice);
+    if (userChoice==="denied") {
+      console.log("notification was denied");
+    } else {
+      console.log("notification grantedxxxxxxxxxxx");
+      showNotificationMessage();
+    }
+  })
+}
+if ("notification" in window && "serviceWorker" in navigator) {
+  notificationButton.addEventListener("click",requestPermition)
+}

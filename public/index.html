@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <title>PwaNote,  Toplearn.Com Progressive Web App Course</title>
   <!-- ///link manifest.json to the pages of our app/// -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <!--For Safari-->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -70,7 +70,7 @@
       <nav class="mdl-navigation">
         <a class="mdl-navigation__link" href="/index.html">Notes</a>
         <a class="mdl-navigation__link" href="/add.html">Add Note</a>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent notification_button">
           Enable Notification
         </button>
       </nav>
@@ -98,38 +98,7 @@
             </div>
           </noscript>
 
-          <!--
-            Column START
-            Basically, NOTE_TEMPLE in main.js is similar to this snippet
-
-
-          <div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet" id="column">
-
-            <div class="mdl-card mdl-shadow--2dp" style="width:95%; margin:1rem">
-              <div class="mdl-card__title">
-                <h2 class="mdl-card__title-text">Auckland Sky Tower, Auckland, New Zealand</h2>
-              </div>
-              <div class="mdl-card__media mdl-color--cyan" style="padding:2px">
-              </div>
-              <div class="mdl-card__supporting-text">
-                The Sky Tower is an observation and telecommunications tower located in Auckland, New Zealand. It is
-                328 metres (1,076 ft) tall, making it the tallest man-made structure in the Southern
-                Hemisphere.
-              </div>
-              <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-js-button mdl-button--colored mdl-color-text--cyan mdl-js-ripple-effect">
-                  Edit
-                </a>
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                  Delete
-                </a>
-              </div>
-            </div>
-
-          </div>
-
-          Column END -->
-
+ 
         </div>
       </div>
     </main>
@@ -180,6 +149,7 @@
   <script src="assets/js/helpers.js"></script>
   <script src="assets/js/api.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="log.js"></script>
 
   <script>
     // Methods needed for index.html page
