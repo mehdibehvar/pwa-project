@@ -234,17 +234,20 @@ const notificationButton=document.querySelector(".notification_button");
 function showNotificationMessage() {
   const options={
     body:"your subscribe was successfully..",
-    // badge:"/assets/images/icons/icon-48x48.png",
+    badge:"/assets/images/icons/icon-48x48.png",
     icon:"/assets/images/icons/icon-48x48.png",
     // image:"/assets/images/icons/icon-48x48.png",
-    dir:"ltr",
+    dir:"rtl",//auto/rtl/ltr
     vibrate:[200, 100, 200]
   }
   const n=new Notification("success notification",options);
 }
+function modifyNotifButton() {
+  notificationButton.innerHTML="subscribed"
+  notificationButton.disabled=true;
+}
 function requestPermition() {
   Notification.requestPermission(function (userChoice) {
-    console.log("userchoice:",userChoice);
     if (userChoice==="denied") {
       console.log("notification was denied");
     } else {
@@ -254,5 +257,10 @@ function requestPermition() {
   })
 }
 if ("notification" in window && "serviceWorker" in navigator) {
+  if(Notification.permission==="granted"){
+  modifyNotifButton();
+  }
   notificationButton.addEventListener("click",requestPermition)
+}else{
+  notificationButton.style.display="none";
 }
