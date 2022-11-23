@@ -103,7 +103,7 @@ const fetchOffline = async (request) => {
 //// create background-sync
 self.addEventListener("sync", function (event) {
   if (event.tag === "new-notes-sync") {
-    console.log(" save sssssssyncccccccccccc");
+    console.log(" save background sync");
     event.waitUntil(
       db.readAllNotes().then(function (data) {
         data
@@ -113,7 +113,7 @@ self.addEventListener("sync", function (event) {
     );
   }
   if (event.tag ==="delete-notes-sync") {
-    console.log(" delete sssssssyncccccccccccc");
+    console.log(" delete background sync");
    let serverData;
    event.waitUntil(
        getAllNotes().then(function (res) {
