@@ -122,12 +122,15 @@ const sortAndUpdateUI=function (data) {
     };
 /////delete note/////////////
     var deleteNote = function(id) {
+      ///online
       deleteData(id).then(function (res) {
         helpers.showMessage('Note deleted!!!!!:' + id);
               // setTimeout(() => {
               // window.location.replace("/index.html");
               // }, 500);
-    }).then(()=>getDataAndUpdateUI()).catch(function () {
+    }).then(()=>getDataAndUpdateUI())
+    .catch(function () {
+      ///offline
          if ("serviceWorker" in navigator && "SyncManager" in window) {
         navigator.serviceWorker.ready
         .then(function (sw) {
@@ -195,32 +198,40 @@ const sortAndUpdateUI=function (data) {
           date: new Date(),
           synced: false,
         };
-        ////save note in the indexedDB and register a save background sync tag.(sw.sync.register)
-        if ("serviceWorker" in navigator && "SyncManager" in window) {
-          navigator.serviceWorker.ready
-          .then(function (sw) {
-          db.writeNotes(noteData).then(function () {
-          helpers.showMessage('successfully updated to local db!');
-          setTimeout(() => {
-            window.location.replace("/index.html");
-          }, 500);
-          return sw.sync.register(BACKGROUND_SYNC_SAVE);
-        });
-          }).then(function () {
-            console.log("tag-name has been registered");
-          }).catch(function () {
-            console.log("tag-name error");
+  sendData(noteData)
+  .then(()=>{
+    helpers.showMessage('successfully updated to databaseeeeee!');
+    setTimeout(() => {
+      window.location.replace("/index.html");
+    }, 500);
+  }).catch(()=>{
+          ////if offline save note in the indexedDB and register a save background sync tag.(sw.sync.register)
+          if ("serviceWorker" in navigator && "SyncManager" in window) {
+            navigator.serviceWorker.ready
+            .then(function (sw) {
+            db.writeNotes(noteData).then(function () {
+            helpers.showMessage('successfully updated to local db!');
+            setTimeout(() => {
+              window.location.replace("/index.html");
+            }, 500);
+            return sw.sync.register(BACKGROUND_SYNC_SAVE);
+          });
+            }).then(function () {
+              console.log("tag-name has been registered");
+            }).catch(function () {
+              console.log("tag-name error");
+            })
+          }else{
+                 sendData(noteData).then(function (res) {
+                 helpers.showMessage("data saved in database");
+                  setTimeout(() => {
+                    window.location.replace("/index.html");
+            }, 500);
+          }).catch(function (error) {
+            console.log(error);
           })
-        }else{
-               sendData(noteData).then(function (res) {
-               helpers.showMessage("data saved in database");
-                setTimeout(() => {
-                  window.location.replace("/index.html");
-          }, 500);
-        }).catch(function (error) {
-          console.log(error);
-        })
-        }
+          }
+  })
       });
     };
 
