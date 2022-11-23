@@ -103,6 +103,7 @@ const fetchOffline = async (request) => {
 //// create background-sync
 self.addEventListener("sync", function (event) {
   if (event.tag === "new-notes-sync") {
+    console.log(" save sssssssyncccccccccccc");
     event.waitUntil(
       db.readAllNotes().then(function (data) {
         data
@@ -110,6 +111,28 @@ self.addEventListener("sync", function (event) {
           .map((unSyncNote) => sendData(unSyncNote));
       })
     );
+  }
+  if (event.tag ==="delete-notes-sync") {
+    console.log(" delete sssssssyncccccccccccc");
+   let serverData;
+   event.waitUntil(
+       getAllNotes().then(function (res) {
+      return res.json();
+    }).then(function (response) {
+      serverData=response;
+      db.readAllNotes().then(function (data) {
+        serverData.map((note)=>{
+        const existDataInIndexedDB=data.find((localNote)=>localNote.id===note.id)
+         if (!existDataInIndexedDB) {
+          deleteData(note.id);
+         }
+         return ;
+        })       
+      })
+    })
+    );
+   
+
   }
 });
 ///functional events of service worker/////

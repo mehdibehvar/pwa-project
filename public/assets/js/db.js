@@ -32,7 +32,7 @@ const db=(function () {
     }
     ///delete note
     const deleteNote=function (id) {
-        console.log("deleting...........");
+
         return dbPromise.then(function (database) {
             const tx=database.transaction(TABLE_NAME,"readwrite")
             .objectStore(TABLE_NAME).delete(id);

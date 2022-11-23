@@ -118,18 +118,42 @@ const sortAndUpdateUI=function (data) {
           sortAndUpdateUI(notes)
         })
       })
-
-
       // Call essential methods
-      
     };
-
+/////delete note/////////////
     var deleteNote = function(id) {
-      db.deleteNote(id).then(function () {
-        helpers.showMessage('Note deleted:' + id);
-        window.history.back(1);  
-        getDataAndUpdateUI();
+      deleteData(id).then(function (res) {
+        helpers.showMessage('Note deleted!!!!!:' + id);
+              // setTimeout(() => {
+              // window.location.replace("/index.html");
+              // }, 500);
+    }).then(()=>getDataAndUpdateUI()).catch(function () {
+         if ("serviceWorker" in navigator && "SyncManager" in window) {
+        navigator.serviceWorker.ready
+        .then(function (sw) {
+          db.deleteNote(id).then(function () {
+            helpers.showMessage('Note deleted:' + id);
+            // setTimeout(() => {
+            //     window.location.replace("/index.html");
+            //   }, 500);
+            return sw.sync.register(BACKGROUND_SYNC_DELETE);
+          }).then(()=>getDataAndUpdateUI())
+        }).then(function () {
+          console.log("delete-tag-name has been registered");
+        }).catch(function () {
+          console.log("delete-tag-name error");
+        })
+      }else{
+        deleteData(id).then(function (res) {
+          helpers.showMessage('Note deleted:' + id);
+              setTimeout(() => {
+                window.location.replace("/index.html");
+        }, 500);
+      }).catch(function (error) {
+        console.log(error);
       })
+      }
+    })
     };
 
     // Call initially to update data
@@ -171,6 +195,7 @@ const sortAndUpdateUI=function (data) {
           date: new Date(),
           synced: false,
         };
+        ////save note in the indexedDB and register a save background sync tag.(sw.sync.register)
         if ("serviceWorker" in navigator && "SyncManager" in window) {
           navigator.serviceWorker.ready
           .then(function (sw) {
@@ -178,8 +203,8 @@ const sortAndUpdateUI=function (data) {
           helpers.showMessage('successfully updated to local db!');
           setTimeout(() => {
             window.location.replace("/index.html");
-          }, 500); 
-          return sw.sync.register(BACKGROUND_SYNC_SAVE)
+          }, 500);
+          return sw.sync.register(BACKGROUND_SYNC_SAVE);
         });
           }).then(function () {
             console.log("tag-name has been registered");
@@ -188,7 +213,7 @@ const sortAndUpdateUI=function (data) {
           })
         }else{
                sendData(noteData).then(function (res) {
-               helpers.showMessage("data saved in db");
+               helpers.showMessage("data saved in database");
                 setTimeout(() => {
                   window.location.replace("/index.html");
           }, 500);
@@ -204,6 +229,7 @@ const sortAndUpdateUI=function (data) {
       pageTitle.innerHTML = 'Edit your Note';
       // get Note information from DB
       db.getNote(parseInt(id)).then(function (data) {
+        console.log(data);
         // this is for showing previous values in the form inputs for edit
         titleInput.value = data.title;
         noteInput.value = data.note;
@@ -230,11 +256,12 @@ if ("serviceWorker" in navigator) {
       })
   })
 }
+///push notification/////
 const notificationButton=document.querySelector(".notification_button");
 function showNotificationMessage() {
   const options={
     body:"your subscribe was successfully..",
-    badge:"/assets/images/icons/icon-48x48.png",
+    // badge:"/assets/images/icons/icon-48x48.png",
     icon:"/assets/images/icons/icon-48x48.png",
     // image:"/assets/images/icons/icon-48x48.png",
     dir:"rtl",//auto/rtl/ltr
@@ -247,6 +274,7 @@ function modifyNotifButton() {
   notificationButton.disabled=true;
 }
 function requestPermition() {
+  ///The requestPermission() method of the Notification interface requests permission from the user for the current origin to display notifications.
   Notification.requestPermission(function (userChoice) {
     if (userChoice==="denied") {
       console.log("notification was denied");
